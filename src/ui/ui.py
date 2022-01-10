@@ -20,9 +20,12 @@ class UI:
         self.loop()
 
     def upload_pictures(self):
-        self.bear = pygame.image.load("./pictures/bear.png")
-        self.berry = pygame.image.load("./pictures/berry.png")
-        self.tiger = pygame.image.load("./pictures/tiger.png")
+        self.bear = pygame.image.load('./pictures/bear.png')
+        self.bear.convert_alpha()
+        self.berry = pygame.image.load('./pictures/berry.png')
+        self.berry.convert_alpha()
+        self.tiger = pygame.image.load('./pictures/tiger.png')
+        self.tiger.convert_alpha()
 
     def starting_point(self):
         self.score = 0
@@ -103,7 +106,7 @@ class UI:
         record = self.big_font.render(f"Record: {self.record}", True, (0, 90, 90))
         self.display.blit(record, (510, 480))
 
-        instructions = self.small_font("Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (0, 140, 140))
+        instructions = self.small_font.render("Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (0, 140, 140))
         self.display.blit(instructions, (20, 520))
 
         self.display.blit(self.bear, (self.bear_x, self.bear_y))
