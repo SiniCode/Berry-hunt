@@ -5,7 +5,7 @@ class UI:
     def __init__(self):
         pygame.init()
 
-        self.display = pygame.display.set_mode((640, 480 + 80))
+        self.display = pygame.display.set_mode((1060, 820))
         pygame.display.set_caption("Berry Hunt")
 
         self.big_font = pygame.font.SysFont("Arial", 26)
@@ -30,22 +30,22 @@ class UI:
     def starting_point(self):
         self.score = 0
 
-        self.bear_x = 10
-        self.bear_y = 380
+        self.bear_x = 20
+        self.bear_y = 580
         self.horizontal_movement = 2
         self.vertical_movement = 0
 
-        self.berry_x = 590
-        self.berry_y = 10
+        self.berry_x = 900
+        self.berry_y = 40
 
         self.tigers = []
-        self.tigers.append([215, 0, 1])
-        self.tigers.append([295, 0, 4])
-        self.tigers.append([375, 0, 2])
+        self.tigers.append([400, 0, 2])
+        self.tigers.append([500, 0, 5])
+        self.tigers.append([600, 0, 3])
         for i in range(2):
             x = randint(-80, -50)
-            y = randint(5, 300)
-            v = randint(1, 5)
+            y = randint(5, 620)
+            v = randint(2, 5)
             self.tigers.append([x, y, v])
 
         self.end = False
@@ -71,22 +71,22 @@ class UI:
                 elif self.end == False and event.key == pygame.K_LEFT:
                     if self.horizontal_movement >= 0:
                         self.horizontal_movement = -2
-                    elif self.horizontal_movement >= 4:
+                    elif self.horizontal_movement >= -4:
                         self.horizontal_movement -= 2
                     self.vertical_movement = 0
 
                 elif self.end == False and event.key == pygame.K_UP:
                     if self.vertical_movement >= 0:
                         self.vertical_movement = -2
-                    elif self.vertical_movement >= 4:
+                    elif self.vertical_movement >= -4:
                         self.vertical_movement -= 2
                     self.horizontal_movement = 0
 
                 elif self.end == False and event.key == pygame.K_DOWN:
                     if self.vertical_movement <= 0:
                         self.vertical_movement = 2
-                    elif self.vertical_movement >= 4:
-                        self.vertical_movement -= 2
+                    elif self.vertical_movement <= 4:
+                        self.vertical_movement += 2
                     self.horizontal_movement = 0
 
                 if self.end == True and event.key == pygame.K_RETURN:
@@ -96,18 +96,19 @@ class UI:
                 exit()
 
     def draw_display(self):
-        self.display.fill((0, 100, 100))
-        pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 638, 479), width = 10)
-        pygame.draw.rect(self.display, (0, 0, 0), (0, 480, 640, 560))
+        #screen 1060, 820
+        self.display.fill((87, 151, 64))
+        pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 1059, 740), width = 10)
+        pygame.draw.rect(self.display, (0, 0, 0), (0, 742, 1060, 820))
 
-        score = self.big_font.render(f"Berries: {self.score}", True, (0, 90, 90))
-        self.display.blit(score, (20, 480))
+        score = self.big_font.render(f"Berries: {self.score}", True, (108, 184, 135))
+        self.display.blit(score, (40, 755))
 
-        record = self.big_font.render(f"Record: {self.record}", True, (0, 90, 90))
-        self.display.blit(record, (510, 480))
+        record = self.big_font.render(f"Record: {self.record}", True, (108, 184, 135))
+        self.display.blit(record, (900, 755))
 
-        instructions = self.small_font.render("Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (0, 140, 140))
-        self.display.blit(instructions, (20, 520))
+        instructions = self.small_font.render("Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (252, 252, 252))
+        self.display.blit(instructions, (40, 790))
 
         self.display.blit(self.bear, (self.bear_x, self.bear_y))
         self.bear_x += self.horizontal_movement
@@ -121,17 +122,17 @@ class UI:
 
             if n < 3:
                 self.tigers[n][1] += self.tigers[n][2]
-                if self.tigers[n][1] <= 0 or self.tigers[n][1] >= 480 - self.tiger.get_height():
+                if self.tigers[n][1] <= 0 or self.tigers[n][1] >= 740 - self.tiger.get_height():
                     self.tigers[n][2] = -self.tigers[n][2]
 
             else:
                 self.tigers[n][0] += self.tigers[n][2]
-                if (self.tigers[n][0] < -80 and self.tigers[n][2] < 0) or (self.tigers[n][0] > 670 and self.tigers[n][2] > 0):
+                if (self.tigers[n][0] < -80 and self.tigers[n][2] < 0) or (self.tigers[n][0] > 1065 and self.tigers[n][2] > 0):
                     left = randint(0, 1)
                     if left == 1:
-                        self.tigers[n] = [randint(-80, -50), randint(5, 400), randint(1, 4)]
+                        self.tigers[n] = [randint(-80, -50), randint(5, 620), randint(2, 5)]
                     else:
-                       self.tigers[n] = [randint(640, 670), randint(5, 400), -randint(1, 4)]
+                       self.tigers[n] = [randint(1060, 1090), randint(5, 620), -randint(2, 5)]
 
         self.check_hit()
 
@@ -143,3 +144,31 @@ class UI:
 
     def check_hit(self):
         pass #siirrä serviceen
+
+    def game_over(self):
+        self.horizontal_movement = 0
+        self.vertical_movement = 0
+        for tiger in self.tigers:
+            tiger[2] = 0
+
+        if self.score > self.record:
+            self.record = self.score
+            self.new_record = True
+
+        self.end = True
+        self.draw_end_display()
+
+    def draw_end_display(self):
+        self.display.fill((0, 0, 0))
+
+        text = self.big_font.render(f"Game over. You picked {self.score} berries!", True, (87, 151, 64))
+        self.display.blit(text, (530-text.get_width()/2, 410-text.get_height()/2))
+
+        if self.new_record:
+            congrats = self.big_font.render("Congratulations, that is a new record!", True, (87, 151, 64))
+            self.display.blit(congrats, (530-congrats.get_width()/2, 500))
+
+        new_game = self.small_font.render("Press ENTER to start a new game!", True, (252, 252, 252))
+        self.display.blit(new_game, (530-new_game.get_width()/2, 600))
+
+        pygame.display.flip()
