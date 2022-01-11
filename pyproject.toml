@@ -10,8 +10,6 @@ invoke = "^1.6.0"
 pygame = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-coverage = "^6.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
