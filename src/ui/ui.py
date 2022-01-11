@@ -20,7 +20,7 @@ class UI:
         self.clock = pygame.time.Clock()
 
     def check_record(self):
-        with open("./src/data/record.txt") as file:
+        with open("./data/record.txt") as file:
             record = file.read().strip()
         return int(record)
 
@@ -97,23 +97,58 @@ class UI:
                 if self.end == True and event.key == pygame.K_RETURN:
                     self.starting_point()
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if mouse_x > 898 and mouse_x < 1040 and mouse_y > 783 and mouse_y < 800:
+                    self.record_to_zero()
+
             if event.type == pygame.QUIT:
                 exit()
 
+    def record_to_zero(self):
+        self.record = 0
+        with open("./data/record.txt", "w") as file:
+            file.write("0")
+
     def draw_display(self):
         self.display.fill((87, 151, 64))
+        self.draw_rects()
+        self.add_texts()
+        self.draw_pictures()
+
+        self.check_hits()
+
+        pygame.display.flip()
+        self.clock.tick(60)
+
+    def draw_rects(self):
         pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 1059, 740), width = 10)
         pygame.draw.rect(self.display, (0, 0, 0), (0, 742, 1060, 820))
+        pygame.draw.rect(self.display, (252, 252, 252), (898, 783, 1040, 800))
 
+    def add_texts(self):
         score = self.big_font.render(f"Berries: {self.score}", True, (108, 184, 135))
         self.display.blit(score, (40, 755))
+
+        if self.horizontal_movement != 0:
+            speed = abs(self.horizontal_movement//2)
+        elif self.vertical_movement != 0:
+            speed = abs(self.vertical_movement//2)
+        else:
+            speed = 0
+        speed_text = self.big_font.render(f"Current speed: {speed}", True, (108, 184, 135))
+        self.display.blit(speed_text, (530-speed_text.get_width()/2, 755))
 
         record = self.big_font.render(f"Record: {self.record}", True, (108, 184, 135))
         self.display.blit(record, (900, 755))
 
+        set_to_zero = self.small_font.render("Set back to zero", True, (108, 184, 135))
+        self.display.blit(set_to_zero, (905, 790))
+
         instructions = self.small_font.render("Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (252, 252, 252))
         self.display.blit(instructions, (40, 790))
 
+    def draw_pictures(self):
         self.display.blit(self.bear, (self.bear_x, self.bear_y))
         self.bear_x += self.horizontal_movement
         self.bear_y += self.vertical_movement
@@ -138,28 +173,23 @@ class UI:
                     else:
                        self.tigers[n] = [randint(1060, 1090), randint(5, 620), -randint(2, 5)]
 
-        self.check_hits()
-
-        pygame.display.flip()
-        self.clock.tick(60)
-
     def pick_berry(self):
-        bear = pygame.Rect(self.bear_x, self.bear_y, self.bear.get_width(), self.bear.get_height())
-        berry = pygame.Rect(self.berry_x, self.berry_y, self.berry.get_width(), self.berry.get_height())
+        bear = pygame.Rect(self.bear_x+5, self.bear_y+5, self.bear.get_width()-10, self.bear.get_height()-10)
+        berry = pygame.Rect(self.berry_x+3, self.berry_y+3, self.berry.get_width()-6, self.berry.get_height()-6)
         if bear.colliderect(berry):
             self.score += 1
             self.berry_x = randint(10, 1050-self.berry.get_width())
             self.berry_y = randint(10, 730-self.berry.get_height())
 
     def check_hits(self):
-        bear = pygame.Rect(self.bear_x, self.bear_y, self.bear.get_width(), self.bear.get_height())
+        bear = pygame.Rect(self.bear_x+7, self.bear_y+5, self.bear.get_width()-14, self.bear.get_height()-10)
 
         for tiger in self.tigers:
-            spot = pygame.Rect(tiger[0], tiger[1], self.tiger.get_width(), self.tiger.get_height())
+            spot = pygame.Rect(tiger[0]+7, tiger[1]+7, self.tiger.get_width()-14, self.tiger.get_height()-14)
             if bear.colliderect(spot):
                 self.game_over()
 
-        if self.bear_x < 5 or self.bear_x+self.bear.get_width() > 1055 or self.bear_y < 5 or self.bear_y+self.bear.get_height() > 735:
+        if self.bear_x < 5 or self.bear_x+self.bear.get_width() > 1055 or self.bear_y < 5 or self.bear_y+self.bear.get_height() > 730:
             self.game_over()
 
     def game_over(self):
@@ -177,13 +207,18 @@ class UI:
         self.draw_end_display()
 
     def save_record(self):
-            with open("./src/data/record.txt", "w") as file:
+            with open("./data/record.txt", "w") as file:
                 file.write(str(self.record))
 
     def draw_end_display(self):
         self.display.fill((0, 0, 0))
 
-        text = self.big_font.render(f"Game over. You picked {self.score} berries!", True, (87, 151, 64))
+        if self.score == 1:
+            message = "Game over. You picked 1 berry."
+        else:
+            message = f"Game over. You picked {self.score} berries."
+
+        text = self.big_font.render(message, True, (87, 151, 64))
         self.display.blit(text, (530-text.get_width()/2, 410-text.get_height()/2))
 
         if self.new_record:
