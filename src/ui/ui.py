@@ -1,6 +1,7 @@
 import pygame
 from random import randint
 
+
 class UI:
     def __init__(self):
         pygame.init()
@@ -122,12 +123,13 @@ class UI:
         self.clock.tick(60)
 
     def draw_rects(self):
-        pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 1059, 740), width = 10)
+        pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 1059, 740), width=10)
         pygame.draw.rect(self.display, (0, 0, 0), (0, 742, 1060, 820))
         pygame.draw.rect(self.display, (252, 252, 252), (898, 783, 1040, 800))
 
     def add_texts(self):
-        score = self.big_font.render(f"Berries: {self.score}", True, (108, 184, 135))
+        score = self.big_font.render(
+            f"Berries: {self.score}", True, (108, 184, 135))
         self.display.blit(score, (40, 755))
 
         if self.horizontal_movement != 0:
@@ -136,16 +138,20 @@ class UI:
             speed = abs(self.vertical_movement//2)
         else:
             speed = 0
-        speed_text = self.big_font.render(f"Current speed: {speed}", True, (108, 184, 135))
+        speed_text = self.big_font.render(
+            f"Current speed: {speed}", True, (108, 184, 135))
         self.display.blit(speed_text, (530-speed_text.get_width()/2, 755))
 
-        record = self.big_font.render(f"Record: {self.record}", True, (108, 184, 135))
+        record = self.big_font.render(
+            f"Record: {self.record}", True, (108, 184, 135))
         self.display.blit(record, (900, 755))
 
-        set_to_zero = self.small_font.render("Set back to zero", True, (108, 184, 135))
+        set_to_zero = self.small_font.render(
+            "Set back to zero", True, (108, 184, 135))
         self.display.blit(set_to_zero, (905, 790))
 
-        instructions = self.small_font.render("Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (252, 252, 252))
+        instructions = self.small_font.render(
+            "Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (252, 252, 252))
         self.display.blit(instructions, (40, 790))
 
     def draw_pictures(self):
@@ -157,7 +163,8 @@ class UI:
         self.pick_berry()
 
         for n in range(len(self.tigers)):
-            self.display.blit(self.tiger, (self.tigers[n][0], self.tigers[n][1]))
+            self.display.blit(
+                self.tiger, (self.tigers[n][0], self.tigers[n][1]))
 
             if n < 3:
                 self.tigers[n][1] += self.tigers[n][2]
@@ -169,23 +176,29 @@ class UI:
                 if (self.tigers[n][0] < -80 and self.tigers[n][2] < 0) or (self.tigers[n][0] > 1065 and self.tigers[n][2] > 0):
                     left = randint(0, 1)
                     if left == 1:
-                        self.tigers[n] = [randint(-80, -50), randint(5, 620), randint(2, 5)]
+                        self.tigers[n] = [
+                            randint(-80, -50), randint(5, 620), randint(2, 5)]
                     else:
-                       self.tigers[n] = [randint(1060, 1090), randint(5, 620), -randint(2, 5)]
+                        self.tigers[n] = [
+                            randint(1060, 1090), randint(5, 620), -randint(2, 5)]
 
     def pick_berry(self):
-        bear = pygame.Rect(self.bear_x+5, self.bear_y+5, self.bear.get_width()-10, self.bear.get_height()-10)
-        berry = pygame.Rect(self.berry_x+3, self.berry_y+3, self.berry.get_width()-6, self.berry.get_height()-6)
+        bear = pygame.Rect(self.bear_x+5, self.bear_y+5,
+                           self.bear.get_width()-10, self.bear.get_height()-10)
+        berry = pygame.Rect(self.berry_x+3, self.berry_y+3,
+                            self.berry.get_width()-6, self.berry.get_height()-6)
         if bear.colliderect(berry):
             self.score += 1
             self.berry_x = randint(10, 1050-self.berry.get_width())
             self.berry_y = randint(10, 730-self.berry.get_height())
 
     def check_hits(self):
-        bear = pygame.Rect(self.bear_x+7, self.bear_y+5, self.bear.get_width()-14, self.bear.get_height()-10)
+        bear = pygame.Rect(self.bear_x+7, self.bear_y+5,
+                           self.bear.get_width()-14, self.bear.get_height()-10)
 
         for tiger in self.tigers:
-            spot = pygame.Rect(tiger[0]+7, tiger[1]+7, self.tiger.get_width()-14, self.tiger.get_height()-14)
+            spot = pygame.Rect(
+                tiger[0]+7, tiger[1]+7, self.tiger.get_width()-14, self.tiger.get_height()-14)
             if bear.colliderect(spot):
                 self.game_over()
 
@@ -207,8 +220,8 @@ class UI:
         self.draw_end_display()
 
     def save_record(self):
-            with open("./data/record.txt", "w") as file:
-                file.write(str(self.record))
+        with open("./data/record.txt", "w") as file:
+            file.write(str(self.record))
 
     def draw_end_display(self):
         self.display.fill((0, 0, 0))
@@ -219,13 +232,16 @@ class UI:
             message = f"Game over. You picked {self.score} berries."
 
         text = self.big_font.render(message, True, (87, 151, 64))
-        self.display.blit(text, (530-text.get_width()/2, 410-text.get_height()/2))
+        self.display.blit(
+            text, (530-text.get_width()/2, 410-text.get_height()/2))
 
         if self.new_record:
-            congrats = self.big_font.render("Congratulations, that is a new record!", True, (87, 151, 64))
+            congrats = self.big_font.render(
+                "Congratulations, that is a new record!", True, (87, 151, 64))
             self.display.blit(congrats, (530-congrats.get_width()/2, 500))
 
-        new_game = self.small_font.render("Press ENTER to start a new game!", True, (252, 252, 252))
+        new_game = self.small_font.render(
+            "Press ENTER to start a new game!", True, (252, 252, 252))
         self.display.blit(new_game, (530-new_game.get_width()/2, 600))
 
         pygame.display.flip()
