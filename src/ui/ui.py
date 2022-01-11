@@ -1,6 +1,5 @@
-import pygame
 from random import randint
-
+import pygame
 
 class UI:
     def __init__(self):
@@ -49,10 +48,10 @@ class UI:
         self.tigers.append([500, 0, 5])
         self.tigers.append([600, 0, 3])
         for i in range(2):
-            x = randint(-80, -50)
-            y = randint(5, 520)
-            v = randint(2, 5)
-            self.tigers.append([x, y, v])
+            X = randint(-80, -50)
+            Y = randint(5, 520)
+            V = randint(2, 5)
+            self.tigers.append([X, Y, V])
 
         self.end = False
         self.new_record = False
@@ -67,28 +66,28 @@ class UI:
         for event in pygame.event.get():
 
             if event.type == pygame.KEYDOWN:
-                if self.end == False and event.key == pygame.K_RIGHT:
+                if self.end is False and event.key == pygame.K_RIGHT:
                     if self.horizontal_movement <= 0:
                         self.horizontal_movement = 2
                     elif self.horizontal_movement <= 6:
                         self.horizontal_movement += 2
                     self.vertical_movement = 0
 
-                elif self.end == False and event.key == pygame.K_LEFT:
+                elif self.end is False and event.key == pygame.K_LEFT:
                     if self.horizontal_movement >= 0:
                         self.horizontal_movement = -2
                     elif self.horizontal_movement >= -6:
                         self.horizontal_movement -= 2
                     self.vertical_movement = 0
 
-                elif self.end == False and event.key == pygame.K_UP:
+                elif self.end is False and event.key == pygame.K_UP:
                     if self.vertical_movement >= 0:
                         self.vertical_movement = -2
                     elif self.vertical_movement >= -6:
                         self.vertical_movement -= 2
                     self.horizontal_movement = 0
 
-                elif self.end == False and event.key == pygame.K_DOWN:
+                elif self.end is False and event.key == pygame.K_DOWN:
                     if self.vertical_movement <= 0:
                         self.vertical_movement = 2
                     elif self.vertical_movement <= 6:
@@ -150,8 +149,9 @@ class UI:
             "Set back to zero", True, (108, 184, 135))
         self.display.blit(set_to_zero, (905, 790))
 
+        i = "Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over."
         instructions = self.small_font.render(
-            "Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over.", True, (252, 252, 252))
+            i, True, (252, 252, 252))
         self.display.blit(instructions, (40, 790))
 
     def draw_pictures(self):
@@ -163,17 +163,18 @@ class UI:
         self.pick_berry()
 
         for n in range(len(self.tigers)):
+            tiger = self.tigers[n]
             self.display.blit(
-                self.tiger, (self.tigers[n][0], self.tigers[n][1]))
+                self.tiger, (tiger[0], tiger[1]))
 
             if n < 3:
-                self.tigers[n][1] += self.tigers[n][2]
-                if self.tigers[n][1] <= 0 or self.tigers[n][1] >= 740 - self.tiger.get_height():
-                    self.tigers[n][2] = -self.tigers[n][2]
+                tiger[1] += tiger[2]
+                if tiger[1] <= 0 or tiger[1] >= 740 - self.tiger.get_height():
+                    self.tigers[n][2] = -tiger[2]
 
             else:
-                self.tigers[n][0] += self.tigers[n][2]
-                if (self.tigers[n][0] < -80 and self.tigers[n][2] < 0) or (self.tigers[n][0] > 1065 and self.tigers[n][2] > 0):
+                tiger[0] += tiger[2]
+                if (tiger[0] < -80 and tiger[2] < 0) or (tiger[0] > 1065 and tiger[2] > 0):
                     left = randint(0, 1)
                     if left == 1:
                         self.tigers[n] = [
@@ -202,7 +203,11 @@ class UI:
             if bear.colliderect(spot):
                 self.game_over()
 
-        if self.bear_x < 5 or self.bear_x+self.bear.get_width() > 1055 or self.bear_y < 5 or self.bear_y+self.bear.get_height() > 730:
+        hits_left_wall = self.bear_x < 5
+        hits_right_wall = self.bear_x + self.bear.get_width() > 1055
+        hits_upper_wall = self.bear_y < 5
+        hits_lower_wall = self.bear_y + self.bear.get_height() > 730
+        if hits_left_wall or hits_right_wall or hits_upper_wall or hits_lower_wall:
             self.game_over()
 
     def game_over(self):
