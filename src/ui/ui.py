@@ -20,11 +20,11 @@ class UI:
         self.loop()
 
     def upload_pictures(self):
-        self.bear = pygame.image.load('./pictures/bear.png')
+        self.bear = pygame.image.load('./src/pictures/bear.png')
         self.bear.convert_alpha()
-        self.berry = pygame.image.load('./pictures/berry.png')
+        self.berry = pygame.image.load('./src/pictures/berry.png')
         self.berry.convert_alpha()
-        self.tiger = pygame.image.load('./pictures/tiger.png')
+        self.tiger = pygame.image.load('./src/pictures/tiger.png')
         self.tiger.convert_alpha()
 
     def starting_point(self):
