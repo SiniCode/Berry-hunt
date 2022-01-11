@@ -4,7 +4,13 @@ from random import randint
 class UI:
     def __init__(self):
         pygame.init()
+        self.set_up()
+        self.record = self.check_record()
+        self.upload_pictures()
+        self.starting_point()
+        self.loop()
 
+    def set_up(self):
         self.display = pygame.display.set_mode((1060, 820))
         pygame.display.set_caption("Berry Hunt")
 
@@ -13,11 +19,10 @@ class UI:
 
         self.clock = pygame.time.Clock()
 
-        self.record = 0
-
-        self.upload_pictures()
-        self.starting_point()
-        self.loop()
+    def check_record(self):
+        with open("./src/data/record.txt") as file:
+            record = file.read().strip()
+        return int(record)
 
     def upload_pictures(self):
         self.bear = pygame.image.load('./src/pictures/bear.png')
@@ -44,7 +49,7 @@ class UI:
         self.tigers.append([600, 0, 3])
         for i in range(2):
             x = randint(-80, -50)
-            y = randint(5, 620)
+            y = randint(5, 520)
             v = randint(2, 5)
             self.tigers.append([x, y, v])
 
@@ -64,28 +69,28 @@ class UI:
                 if self.end == False and event.key == pygame.K_RIGHT:
                     if self.horizontal_movement <= 0:
                         self.horizontal_movement = 2
-                    elif self.horizontal_movement <= 4:
+                    elif self.horizontal_movement <= 6:
                         self.horizontal_movement += 2
                     self.vertical_movement = 0
 
                 elif self.end == False and event.key == pygame.K_LEFT:
                     if self.horizontal_movement >= 0:
                         self.horizontal_movement = -2
-                    elif self.horizontal_movement >= -4:
+                    elif self.horizontal_movement >= -6:
                         self.horizontal_movement -= 2
                     self.vertical_movement = 0
 
                 elif self.end == False and event.key == pygame.K_UP:
                     if self.vertical_movement >= 0:
                         self.vertical_movement = -2
-                    elif self.vertical_movement >= -4:
+                    elif self.vertical_movement >= -6:
                         self.vertical_movement -= 2
                     self.horizontal_movement = 0
 
                 elif self.end == False and event.key == pygame.K_DOWN:
                     if self.vertical_movement <= 0:
                         self.vertical_movement = 2
-                    elif self.vertical_movement <= 4:
+                    elif self.vertical_movement <= 6:
                         self.vertical_movement += 2
                     self.horizontal_movement = 0
 
@@ -96,7 +101,6 @@ class UI:
                 exit()
 
     def draw_display(self):
-        #screen 1060, 820
         self.display.fill((87, 151, 64))
         pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 1059, 740), width = 10)
         pygame.draw.rect(self.display, (0, 0, 0), (0, 742, 1060, 820))
@@ -134,16 +138,29 @@ class UI:
                     else:
                        self.tigers[n] = [randint(1060, 1090), randint(5, 620), -randint(2, 5)]
 
-        self.check_hit()
+        self.check_hits()
 
         pygame.display.flip()
         self.clock.tick(60)
 
     def pick_berry(self):
-        pass #siirrä serviceen
+        bear = pygame.Rect(self.bear_x, self.bear_y, self.bear.get_width(), self.bear.get_height())
+        berry = pygame.Rect(self.berry_x, self.berry_y, self.berry.get_width(), self.berry.get_height())
+        if bear.colliderect(berry):
+            self.score += 1
+            self.berry_x = randint(10, 1050-self.berry.get_width())
+            self.berry_y = randint(10, 730-self.berry.get_height())
 
-    def check_hit(self):
-        pass #siirrä serviceen
+    def check_hits(self):
+        bear = pygame.Rect(self.bear_x, self.bear_y, self.bear.get_width(), self.bear.get_height())
+
+        for tiger in self.tigers:
+            spot = pygame.Rect(tiger[0], tiger[1], self.tiger.get_width(), self.tiger.get_height())
+            if bear.colliderect(spot):
+                self.game_over()
+
+        if self.bear_x < 5 or self.bear_x+self.bear.get_width() > 1055 or self.bear_y < 5 or self.bear_y+self.bear.get_height() > 735:
+            self.game_over()
 
     def game_over(self):
         self.horizontal_movement = 0
@@ -154,9 +171,14 @@ class UI:
         if self.score > self.record:
             self.record = self.score
             self.new_record = True
+            self.save_record()
 
         self.end = True
         self.draw_end_display()
+
+    def save_record(self):
+            with open("./src/data/record.txt", "w") as file:
+                file.write(str(self.record))
 
     def draw_end_display(self):
         self.display.fill((0, 0, 0))
