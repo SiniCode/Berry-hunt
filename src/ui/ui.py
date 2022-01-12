@@ -5,6 +5,8 @@ import pygame
 
 class UI:
     def __init__(self):
+        """Initialize the game and start the first round."""
+        
         pygame.init()
         self.set_up()
         self.record = self.check_record()
@@ -25,6 +27,8 @@ class UI:
         self.loop()
 
     def set_up(self):
+        """Configure the game display, fonts, and the clock."""
+        
         self.display = pygame.display.set_mode((1060, 820))
         pygame.display.set_caption("Berry Hunt")
 
@@ -34,17 +38,23 @@ class UI:
         self.clock = pygame.time.Clock()
 
     def check_record(self):
+        """Read the current record from a separate file."""
+        
         with open("./data/record.txt") as file:
             record = file.read().strip()
         return int(record)
 
     def upload_pictures(self):
+        """Upload the game characters from a separate directory."""
+        
         self.bear = pygame.image.load('./src/pictures/bear.png')
         self.berry = pygame.image.load('./src/pictures/berry.png')
         self.tiger = pygame.image.load('./src/pictures/tiger.png')
         self.bear2 = pygame.image.load('./src/pictures/bear2.png')
 
     def starting_point(self):
+        """Set the correct value to all variables at the beginning of a new round."""
+        
         self.score = 0
 
         self.bear_x = 20
@@ -75,6 +85,8 @@ class UI:
             self.clock.tick(60)
 
     def check_events(self):
+        """Specify the necessary key and mouse functions."""
+        
         for event in pygame.event.get():
 
             if event.type == pygame.KEYDOWN:
@@ -118,6 +130,8 @@ class UI:
                 sys.exit()
 
     def record_to_zero(self):
+        """Set the game record back to zero and save the change in the record file."""
+        
         self.record = 0
         with open("./data/record.txt", "w") as file:
             file.write("0")
@@ -134,11 +148,14 @@ class UI:
         self.clock.tick(60)
 
     def draw_rects(self):
+        """Draw the background."""
         pygame.draw.rect(self.display, (0, 0, 0), (0, 0, 1059, 740), width=10)
         pygame.draw.rect(self.display, (0, 0, 0), (0, 742, 1060, 820))
         pygame.draw.rect(self.display, (252, 252, 252), (898, 783, 1040, 800))
 
     def add_texts(self):
+        """Show instructions and the current score, speed, and record on the display."""
+        
         score = self.big_font.render(
             f"Berries: {self.score}", True, (108, 184, 135))
         self.display.blit(score, (40, 755))
@@ -167,6 +184,11 @@ class UI:
         self.display.blit(instructions, (40, 790))
 
     def draw_pictures(self):
+        """Show the game characters on the display.
+        The vertically moving tigers bounce back from the walls
+        while the horizontally moving tigers disappear and receive a new
+        starting spot and speed at random."""
+        
         self.display.blit(self.bear, (self.bear_x, self.bear_y))
         self.bear_x += self.horizontal_movement
         self.bear_y += self.vertical_movement
@@ -195,6 +217,9 @@ class UI:
                             randint(1060, 1090), randint(5, 620), -randint(2, 5)]
 
     def pick_berry(self):
+        """If the bear hits the berry, move the berry to a random location on the display
+        and add 1 to the score."""
+        
         bear = pygame.Rect(self.bear_x+5, self.bear_y+5,
                            self.bear.get_width()-10, self.bear.get_height()-10)
         berry = pygame.Rect(self.berry_x+3, self.berry_y+3,
@@ -205,6 +230,8 @@ class UI:
             self.berry_y = randint(10, 730-self.berry.get_height())
 
     def check_hits(self):
+        """If the bear hits a tiger or a wall, end the game."""
+        
         bear = pygame.Rect(self.bear_x+7, self.bear_y+5,
                            self.bear.get_width()-14, self.bear.get_height()-10)
 
@@ -222,6 +249,9 @@ class UI:
             self.game_over()
 
     def game_over(self):
+        """Stop all movement at the end of the game and and check if the player made a new record.
+        Move to the end display."""
+        
         self.horizontal_movement = 0
         self.vertical_movement = 0
         for tiger in self.tigers:
@@ -236,10 +266,14 @@ class UI:
         self.draw_end_display()
 
     def save_record(self):
+        """Save a new record to a separate file."""
+        
         with open("./data/record.txt", "w") as file:
             file.write(str(self.record))
 
     def draw_end_display(self):
+        """Show a game over message to the player."""
+        
         self.display.fill((0, 0, 0))
 
         self.display.blit(self.bear2, (530-self.bear2.get_width()/2, 50))
