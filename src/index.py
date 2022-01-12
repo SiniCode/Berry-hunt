@@ -2,7 +2,7 @@ from ui.ui import UI
 
 
 def main():
-    ui = UI()
+    user_interface = UI()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,7 @@
 from random import randint
+import sys
 import pygame
+
 
 class UI:
     def __init__(self):
@@ -7,6 +9,18 @@ class UI:
         self.set_up()
         self.record = self.check_record()
         self.upload_pictures()
+
+        self.score = None
+        self.bear_x = None
+        self.bear_y = None
+        self.horizontal_movement = None
+        self.vertical_movement = None
+        self.berry_x = None
+        self.berry_y = None
+        self.tigers = None
+        self.end = None
+        self.new_record = None
+
         self.starting_point()
         self.loop()
 
@@ -46,10 +60,10 @@ class UI:
         self.tigers.append([500, 0, 5])
         self.tigers.append([600, 0, 3])
         for i in range(2):
-            X = randint(-80, -50)
-            Y = randint(5, 520)
-            V = randint(2, 5)
-            self.tigers.append([X, Y, V])
+            x_coord = randint(-80, -50)
+            y_coord = randint(5, 520)
+            velocity = randint(2, 5)
+            self.tigers.append([x_coord, y_coord, velocity])
 
         self.end = False
         self.new_record = False
@@ -92,16 +106,16 @@ class UI:
                         self.vertical_movement += 2
                     self.horizontal_movement = 0
 
-                if self.end == True and event.key == pygame.K_RETURN:
+                if self.end is True and event.key == pygame.K_RETURN:
                     self.starting_point()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                if mouse_x > 898 and mouse_x < 1040 and mouse_y > 783 and mouse_y < 800:
+                if 898 <= mouse_x <= 1040 and 783 <=  mouse_y <= 800:
                     self.record_to_zero()
 
             if event.type == pygame.QUIT:
-                exit()
+                sys.exit()
 
     def record_to_zero(self):
         self.record = 0
@@ -147,7 +161,7 @@ class UI:
             "Set back to zero", True, (108, 184, 135))
         self.display.blit(set_to_zero, (905, 790))
 
-        i = "Control the bear with the arrow keys. If you run into a wall or a tiger, the game is over."
+        i = "Control the bear with the arrow keys. If you hit a wall or a tiger, the game is over."
         instructions = self.small_font.render(
             i, True, (252, 252, 252))
         self.display.blit(instructions, (40, 790))
@@ -160,25 +174,24 @@ class UI:
         self.display.blit(self.berry, (self.berry_x, self.berry_y))
         self.pick_berry()
 
-        for n in range(len(self.tigers)):
-            tiger = self.tigers[n]
+        for index, tiger in enumerate(self.tigers):
             self.display.blit(
                 self.tiger, (tiger[0], tiger[1]))
 
-            if n < 3:
+            if index < 3:
                 tiger[1] += tiger[2]
                 if tiger[1] <= 0 or tiger[1] >= 740 - self.tiger.get_height():
-                    self.tigers[n][2] = -tiger[2]
+                    self.tigers[index][2] = -tiger[2]
 
             else:
                 tiger[0] += tiger[2]
                 if (tiger[0] < -80 and tiger[2] < 0) or (tiger[0] > 1065 and tiger[2] > 0):
                     left = randint(0, 1)
                     if left == 1:
-                        self.tigers[n] = [
+                        self.tigers[index] = [
                             randint(-80, -50), randint(5, 620), randint(2, 5)]
                     else:
-                        self.tigers[n] = [
+                        self.tigers[index] = [
                             randint(1060, 1090), randint(5, 620), -randint(2, 5)]
 
     def pick_berry(self):
