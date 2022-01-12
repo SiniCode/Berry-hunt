@@ -26,11 +26,9 @@ class UI:
 
     def upload_pictures(self):
         self.bear = pygame.image.load('./src/pictures/bear.png')
-        self.bear.convert_alpha()
         self.berry = pygame.image.load('./src/pictures/berry.png')
-        self.berry.convert_alpha()
         self.tiger = pygame.image.load('./src/pictures/tiger.png')
-        self.tiger.convert_alpha()
+        self.bear2 = pygame.image.load('./src/pictures/bear2.png')
 
     def starting_point(self):
         self.score = 0
@@ -231,6 +229,8 @@ class UI:
     def draw_end_display(self):
         self.display.fill((0, 0, 0))
 
+        self.display.blit(self.bear2, (530-self.bear2.get_width()/2, 50))
+
         if self.score == 1:
             message = "Game over. You picked 1 berry."
         else:
@@ -238,12 +238,12 @@ class UI:
 
         text = self.big_font.render(message, True, (87, 151, 64))
         self.display.blit(
-            text, (530-text.get_width()/2, 410-text.get_height()/2))
+            text, (530-text.get_width()/2, 400))
 
         if self.new_record:
             congrats = self.big_font.render(
                 "Congratulations, that is a new record!", True, (87, 151, 64))
-            self.display.blit(congrats, (530-congrats.get_width()/2, 500))
+            self.display.blit(congrats, (530-congrats.get_width()/2, 450))
 
         new_game = self.small_font.render(
             "Press ENTER to start a new game!", True, (252, 252, 252))
