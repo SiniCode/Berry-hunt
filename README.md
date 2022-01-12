@@ -22,3 +22,13 @@ poetry install
 ```bash
 poetry run invoke start
 ```
+
+### Format (autopep8):
+```bash
+poetry run invoke format
+```
+
+### Analyze the code with pylint:
+```bash
+poetry run invoke lint
+```
