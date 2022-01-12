@@ -23,7 +23,7 @@ poetry install
 poetry run invoke start
 ```
 
-### Format (autopep8):
+### Format the code with autopep8:
 ```bash
 poetry run invoke format
 ```
